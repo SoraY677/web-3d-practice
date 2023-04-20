@@ -5,6 +5,10 @@
   "repository": "git@github.com:SoraY677/my-template.git",
   "author": "soray677 <soray677@outlook.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "yarn --cwd client dev",
+    "build": "yarn --cwd client build"
+  },
   "devDependencies": {
     "prettier": "2.8.7"
   }
