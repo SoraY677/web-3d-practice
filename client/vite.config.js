@@ -1,6 +1,6 @@
 export default {
   base: "./",
   build: {
-    outDir: "../staging",
+    outDir: "../Staging",
   },
 };
