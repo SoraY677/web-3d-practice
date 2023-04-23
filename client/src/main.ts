@@ -36,8 +36,6 @@ document.body.addEventListener('click', () => {
 
 const loader = new GLTFLoader()
 loader.load( '/coffee_demo.gltf', function ( gltf ) {
-  // new THREE.MeshBasicMaterial({color:0xfffff})
-  // gltf.scene.add(new THREE.AmbientLight( 0xffffff ))
   const material = new THREE.MeshStandardMaterial();
   gltf.scene.traverse( function( node ) {
     if ( node.isMesh ) {
@@ -45,8 +43,6 @@ loader.load( '/coffee_demo.gltf', function ( gltf ) {
     }
   } );
   material.color.set( 0xff0000 ); // 赤色
-
-  // gltf.scene.add(new THREE.MeshBasicMaterial({color:0xfffff}))
 
   scene.add( gltf.scene )
 }, function() {
