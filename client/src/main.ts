@@ -1,17 +1,70 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer( { antialias: true } );
+renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1;
+renderer.outputEncoding = THREE.sRGBEncoding;
 document.body.appendChild( renderer.domElement );
 
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+let clickTargetId: string | null = null
+document.body.addEventListener('mousemove', (event) => {
+  const element = event.currentTarget as HTMLBodyElement;
+  const x = event.clientX - element.offsetLeft;
+  const y = event.clientY - element.offsetTop;
+  const w = element.offsetWidth;
+  const h = element.offsetHeight;
+  mouse.x = (x/w)*2-1;
+  mouse.y = -(y/h)*2+1;
+})
+document.body.addEventListener('click', (event) => {
+  if(!clickTargetId) return;
+
+  alert(clickTargetId)
+})
+
+const textureLoader = new THREE.TextureLoader();
+textureLoader.load(
+	// resource URL
+	'/food_tamagoyaki_1pon.png',
+
+	// onLoad callback
+	function ( texture ) {
+		texture.encoding = THREE.sRGBEncoding;
+    texture.flipY = false;
+
+    scene.background = texture;
+    scene.environment = texture;
+    renderer.render( scene, camera );
+	},
+
+	// onProgress callback currently not supported
+	undefined,
+
+	// onError callback
+	function ( err ) {
+		console.error( 'An error happened.' );
+	}
+);
+
+
+const loader = new GLTFLoader()
+loader.load( '/coffee_demo.gltf', function ( gltf ) {
+	scene.add( gltf.scene )
+}, function() {
+}, function ( error ) {
+	console.error( error );
+} );
 
 
 const controls = new OrbitControls( camera, renderer.domElement );
@@ -22,11 +75,21 @@ controls.enableDamping = true;
 
 camera.position.z = 5;
 
-function animate() {
-	requestAnimationFrame( animate );
 
-	cube.rotation.x += 0.01;
-	cube.rotation.y += 0.01;
+function animate() {
+  requestAnimationFrame( animate );
+
+  if(! scene.children?.[0]?.children) return
+
+  raycaster.setFromCamera(mouse,camera);
+  const intersects = raycaster.intersectObjects(scene.children[0].children, false);
+
+  if(intersects.length > 0){
+      const obj = intersects[0].object;
+      clickTargetId = obj.name
+  } else {
+    clickTargetId = null
+  }
 
 	renderer.render( scene, camera );
 }
