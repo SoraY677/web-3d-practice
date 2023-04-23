@@ -37,7 +37,8 @@ document.body.addEventListener('click', () => {
 const loader = new GLTFLoader()
 loader.load( '/coffee_demo.gltf', function ( gltf ) {
   const material = new THREE.MeshStandardMaterial();
-  gltf.scene.traverse( function( node ) {
+  gltf.scene.traverse( function( n) {
+     const node = n as THREE.Mesh
     if ( node.isMesh ) {
       node.material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true } );
     }
