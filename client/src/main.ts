@@ -27,40 +27,28 @@ document.body.addEventListener('mousemove', (event) => {
   mouse.x = (x/w)*2-1;
   mouse.y = -(y/h)*2+1;
 })
-document.body.addEventListener('click', (event) => {
+document.body.addEventListener('click', () => {
   if(!clickTargetId) return;
 
   alert(clickTargetId)
 })
 
-const textureLoader = new THREE.TextureLoader();
-textureLoader.load(
-	// resource URL
-	'/food_tamagoyaki_1pon.png',
-
-	// onLoad callback
-	function ( texture ) {
-		texture.encoding = THREE.sRGBEncoding;
-    texture.flipY = false;
-
-    scene.background = texture;
-    scene.environment = texture;
-    renderer.render( scene, camera );
-	},
-
-	// onProgress callback currently not supported
-	undefined,
-
-	// onError callback
-	function ( err ) {
-		console.error( 'An error happened.' );
-	}
-);
-
 
 const loader = new GLTFLoader()
 loader.load( '/coffee_demo.gltf', function ( gltf ) {
-	scene.add( gltf.scene )
+  // new THREE.MeshBasicMaterial({color:0xfffff})
+  // gltf.scene.add(new THREE.AmbientLight( 0xffffff ))
+  const material = new THREE.MeshStandardMaterial();
+  gltf.scene.traverse( function( node ) {
+    if ( node.isMesh ) {
+      node.material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true } );
+    }
+  } );
+  material.color.set( 0xff0000 ); // 赤色
+
+  // gltf.scene.add(new THREE.MeshBasicMaterial({color:0xfffff}))
+
+  scene.add( gltf.scene )
 }, function() {
 }, function ( error ) {
 	console.error( error );
