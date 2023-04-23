@@ -7,9 +7,10 @@
   "license": "MIT",
   "scripts": {
     "dev": "yarn --cwd client dev",
-    "build": "yarn --cwd client build"
+    "build": "rimraf ./Staging & yarn --cwd client build"
   },
   "devDependencies": {
-    "prettier": "2.8.7"
+    "prettier": "2.8.7",
+    "rimraf": "^5.0.0"
   }
 }
